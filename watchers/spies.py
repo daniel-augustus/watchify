@@ -28,15 +28,41 @@ class SpyContainer:
 
 class WatchersSpy(Watchers):
 
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._spies: t.Dict[t.Tuple[t.Type, str], SpyContainer] = {}
 
     def __repr__(self) -> str:
+        """Show canonical representation, including dynamic truncated observers sequence.
+
+        Examples
+        --------
+        >>> watchers = WatchersSpy().attach_many([CatWatcher(), MonkeyWatcher()])
+        >>> watchers
+        <WatchersSpy object:Observers[CatWatcher, MonkeyWatcher]>
+        """
         instance = super().__repr__()
         return instance.replace('Watchers', 'WatchersSpy')
 
-    def reset(self, reset_spies: t.Optional[bool] = None) -> WatchersLite:
+    def reset(self, reset_spies: bool = True) -> WatchersLite:
+        """Prune all saved observers and spies.
+
+        Parameters
+        ----------
+        reset_spies: calls `undo_spies` along with `reset` (*Default: `True`).
+
+        Examples
+        --------
+        >>> watchers = WatchersSpy().attach_many([CatWatcher(), MonkeyWatcher()])
+        >>> watchers
+        <WatchersSpy object:Observers[CatWatcher, MonkeyWatcher]>
+        >>> watchers.reset()
+        >>> watchers
+        <Watchers object:Observers[]>
+        >>> watchers.spies()
+        []
+        """
         if reset_spies:
             self.undo_spies()
         return super().reset()
@@ -60,6 +86,9 @@ class WatchersSpy(Watchers):
         return spy
 
     def spies(self, as_type: t.Optional[t.Iterable] = None) -> t.List[SpyContainer]:
+        """
+
+        """
         return list(self._spies.values()) if as_type is None else as_type(self._spies.values())
 
     def undo_spy(self, sender: t.Type, target: str) -> SpyContainer:

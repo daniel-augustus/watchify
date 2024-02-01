@@ -276,11 +276,13 @@ class Watchers(WatchersLite):
     >>> watchers.attach_many([CatWatcher(), MonkeyWatcher()])
     <Watchers object:Observers[CatWatcher, MonkeyWatcher]>
     >>> food.cook('fish')
+    >>> watchers.notify(food)
     [watchers][DEBUG][2077-12-27 00:00:00,111] >>> Notifying watcher: CatWatcher object.
     [watchers][DEBUG][2077-12-27 00:00:00,112] >>> Cat loves fish!
     [watchers][DEBUG][2077-12-27 00:00:00,113] >>> Notifying watcher: MonkeyWatcher object.
     [watchers][DEBUG][2077-12-27 00:00:00,114] >>> Monkey hates fish!
     >>> food.cook('banana')
+    >>> watchers.notify(food)
     [watchers][DEBUG][2077-12-27 00:00:00,115] >>> Notifying watcher: CatWatcher object.
     [watchers][DEBUG][2077-12-27 00:00:00,116] >>> Cat hates banana!
     [watchers][DEBUG][2077-12-27 00:00:00,117] >>> Notifying watcher: MonkeyWatcher object.
