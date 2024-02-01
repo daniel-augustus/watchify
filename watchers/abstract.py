@@ -17,19 +17,19 @@ class AbstractWatchers(ABC):
     """Interface for minimum listeners manager implementation."""
 
     @abstractmethod
-    def subscribe(self, watcher: AbstractWatcher) -> 'AbstractWatchers':
+    def attach(self, watcher: AbstractWatcher) -> 'AbstractWatchers':
         """Add a watcher to the pool of listeners."""
 
     @abstractmethod
-    def subscribe_n(self, watchers: t.List[AbstractWatcher]) -> 'AbstractWatchers':
+    def attach_many(self, watchers: t.List[AbstractWatcher]) -> 'AbstractWatchers':
         """Add a list of watchers to the pool of listeners."""
 
     @abstractmethod
-    def unsubscribe(self, watcher: AbstractWatcher) -> 'AbstractWatchers':
+    def detach(self, watcher: AbstractWatcher) -> 'AbstractWatchers':
         """Remove a watcher from the pool of listeners."""
 
     @abstractmethod
-    def unsubscribe_n(self, watchers: t.List[AbstractWatcher]) -> 'AbstractWatchers':
+    def detach_many(self, watchers: t.List[AbstractWatcher]) -> 'AbstractWatchers':
         """Remove a list of watchers from the pool of listeners."""
 
     @abstractmethod
