@@ -2,12 +2,13 @@ class WatcherError(Exception):
     """Base project exceptions."""
 
 
-class NotAWatcherError(WatcherError):
-    """Placed object is not a valid listener."""
+class NotAnObserverError(WatcherError):
+    """Placed object is not a valid observer."""
 
 
 class PushError(WatcherError):
-    """Listener has failed to process a push."""
+    """Observer has failed to process a push."""
 
 
-class SpyError(WatcherError): pass
+class SpyError(WatcherError):
+    """Spy attempt has failed."""
