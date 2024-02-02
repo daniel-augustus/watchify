@@ -39,3 +39,11 @@ class AbstractWatchers(ABC):
     @abstractmethod
     def notify(self, sender: t.Any, *args, **kwargs) -> 'AbstractWatchers':
         """Notify all observers."""
+
+
+class AbstractSpyContainer(ABC):
+    """Interface for minimum spy container implementation."""
+
+    @abstractmethod
+    def restore_state(self) -> None:
+        """Restore instance to its prior spy state."""

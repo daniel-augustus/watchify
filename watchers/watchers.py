@@ -4,19 +4,19 @@ from copy import deepcopy
 from typing import List
 from watchers import functions
 from watchers.abstract import AbstractWatcher, AbstractWatchers
-from watchers.exceptions import NotAWatcherError, PushError, WatcherError
+from watchers.exceptions import NotAnObserverError, PushError, WatcherError
 from watchers.logger import logger as internal_logger
 
 
 class WatchersLite(AbstractWatchers):
-    """Raw implementation used by `Watchers`, easily extended."""
+    """Essential watchers operations used by `Watchers` and `WatchersSpy`, easily extended."""
 
     def __init__(self) -> None:
         """Create an empty observers sequence."""
         self._watchers: t.List[AbstractWatcher] = []
 
     def __add__(self, watchers: AbstractWatchers) -> 'WatchersLite':
-        """Union on both observers pool.
+        """Union on both observers pool using the current instance copy as ref.
 
         Parameters
         ----------
@@ -242,7 +242,7 @@ class WatchersLite(AbstractWatchers):
 
 
 class Watchers(WatchersLite):
-    """Objects decoupled event-driven communication tool.
+    """Objects - highly decoupled - event-driven communication tool.
 
     Parameters
     ----------
@@ -253,23 +253,23 @@ class Watchers(WatchersLite):
 
     Examples
     --------
-    class Food:
-        def cook(self, name: str):
-            self.name = name
+    >>> class Food:
+    ...    def cook(self, name: str):
+    ...        self.name = name
 
-    class CatWatcher(AbstractWatcher):
-        def push(self, food: Food, *args, **kwargs):
-            if food.name == 'fish':
-                logger.debug(f'Cat loves %s!', food.name)
-            else:
-                logger.debug(f'Cat hates %s!', food.name)
+    >>> class CatWatcher(AbstractWatcher):
+    ...    def push(self, food: Food, *args, **kwargs):
+    ...        if food.name == 'fish':
+    ...            logger.debug(f'Cat loves %s!', food.name)
+    ...        else:
+    ...            logger.debug(f'Cat hates %s!', food.name)
 
-    class MonkeyWatcher(AbstractWatcher):
-        def push(self, food: Food, *args, **kwargs):
-            if food.name == 'banana':
-                logger.debug(f'Monkey loves %s!', food.name)
-            else:
-                logger.debug(f'Monkey hates %s!', food.name)
+    >>> class MonkeyWatcher(AbstractWatcher):
+    ...    def push(self, food: Food, *args, **kwargs):
+    ...        if food.name == 'banana':
+    ...            logger.debug(f'Monkey loves %s!', food.name)
+    ...        else:
+    ...            logger.debug(f'Monkey hates %s!', food.name)
 
 
     >>> food, watchers = Food(), Watchers()
@@ -277,15 +277,15 @@ class Watchers(WatchersLite):
     <Watchers object:Observers[CatWatcher, MonkeyWatcher]>
     >>> food.cook('fish')
     >>> watchers.notify(food)
-    [watchers][DEBUG][2077-12-27 00:00:00,111] >>> Notifying watcher: CatWatcher object.
+    [watchers][DEBUG][2077-12-27 00:00:00,111] >>> Notifying watcher: CatWatcher object...
     [watchers][DEBUG][2077-12-27 00:00:00,112] >>> Cat loves fish!
-    [watchers][DEBUG][2077-12-27 00:00:00,113] >>> Notifying watcher: MonkeyWatcher object.
+    [watchers][DEBUG][2077-12-27 00:00:00,113] >>> Notifying watcher: MonkeyWatcher object...
     [watchers][DEBUG][2077-12-27 00:00:00,114] >>> Monkey hates fish!
     >>> food.cook('banana')
     >>> watchers.notify(food)
-    [watchers][DEBUG][2077-12-27 00:00:00,115] >>> Notifying watcher: CatWatcher object.
+    [watchers][DEBUG][2077-12-27 00:00:00,115] >>> Notifying watcher: CatWatcher object...
     [watchers][DEBUG][2077-12-27 00:00:00,116] >>> Cat hates banana!
-    [watchers][DEBUG][2077-12-27 00:00:00,117] >>> Notifying watcher: MonkeyWatcher object.
+    [watchers][DEBUG][2077-12-27 00:00:00,117] >>> Notifying watcher: MonkeyWatcher object...
     [watchers][DEBUG][2077-12-27 00:00:00,118] >>> Monkey loves banana!
     """
 
@@ -294,23 +294,50 @@ class Watchers(WatchersLite):
         logger: t.Optional[logging.Logger] = None,
         disable_logs: bool = False,
         validate: bool = True,
-    ):
+    ) -> None:
+        """`WatchersLite` creation, but allowing log and validation behaviours customization."""
         super().__init__()
         self._logger = logger or internal_logger
         self._logger.disabled = disable_logs
         self._validate = validate
 
     @staticmethod
-    def _is_watcher(obj: t.Any):
-        """Raise an exception if the provided object is not a valid observer."""
+    def _is_watcher(obj: t.Any) -> None:
+        """Raise an exception if the provided object is not a valid observer.
+
+        Parameters
+        ----------
+        obj : target be perform the `AbstractWatcher` validation.
+
+        Examples
+        ----------
+        >>> Watchers._is_watcher(CatWatcher())
+        >>> Watchers._is_watcher(1)
+        Traceback (most recent call last):
+        ...
+        NotAnObserverError: Expected <class 'AbstractWatcher'>, but got <class 'int'>.
+        """
         if not functions.is_watcher(obj):
-            raise NotAWatcherError(f"Expected <class 'AbstractWatcher'>, but got {type(obj)}.")
+            raise NotAnObserverError(f"Expected <class 'AbstractWatcher'>, but got {type(obj)}.")
 
     @staticmethod
     def _is_watchers(obj: t.Any):
-        """Raise an exception if the provided object is not a valid observer manager."""
+        """Raise an exception if the provided object is not a valid observer manager.
+
+        Parameters
+        ----------
+        obj: target be perform the `AbstractWatchers` validation.
+
+        Examples
+        ----------
+        >>> Watchers._is_watcher(Watchers())
+        >>> Watchers._is_watcher(1)
+        Traceback (most recent call last):
+        ...
+        NotAnObserverError: Expected <class 'AbstractWatchers'>, but got <class 'int'>.
+        """
         if not functions.is_watchers(obj):
-            raise NotAWatcherError(f"Expected <class 'AbstractWatchers'>, but got {type(obj)}.")
+            raise NotAnObserverError(f"Expected <class 'AbstractWatchers'>, but got {type(obj)}.")
 
     def __add__(self, watchers: 'Watchers') -> 'Watchers':
         self._is_watchers(watchers) if self._validate else None
@@ -329,12 +356,20 @@ class Watchers(WatchersLite):
         return self
 
     def detach(self, watcher: AbstractWatcher) -> 'Watchers':
-        super().detach(watcher)
+        try:
+            watchers = super().detach(watcher)
+        except ValueError:
+            raise WatcherError(f'Observer <{watcher}> not found in pool.')
         self._logger.debug(f'Unsubscribed watcher: {watcher}.')
+        return watchers
 
     def detach_many(self, watchers: List[AbstractWatcher]) -> 'Watchers':
-        super().detach_many(watchers)
+        try:
+            watchers = super().detach_many(watchers)
+        except ValueError:
+            raise WatcherError('One or more observers not found in pool.')
         self._logger.debug(f'Unsubscribed watchers: {watchers}.')
+        return watchers
 
     def notify(
         self,
@@ -343,12 +378,33 @@ class Watchers(WatchersLite):
         raise_exception: t.Optional[bool] = None,
         **kwargs,
     ) -> 'Watchers':
+        """Notify all observers about some change that may interest any of them.
+
+        Parameters
+        ----------
+        sender : entity being observed. Once an event happens the sender is passed
+            to each observer, so they can scrutinizes it to perform their logic accordingly.
+        args : additional arguments to passed to each observer.
+        raise_exception : whether to propagate an exception while pushing information to observers.
+            (*Default: `None`).
+        kwargs : additional keyword arguments to passed to each observer.
+
+        Examples
+        --------
+        >>> class Food: name = 'fish'
+        >>> watchers = Watchers().attach(CatWatcher())
+        >>> watchers.notify(Food)
+        [watchers][DEBUG][2077-12-27 00:00:00,111] >>> Notifying watcher: CatWatcher object.
+        [watchers][DEBUG][2077-12-27 00:00:00,112] >>> Cat loves fish!
+        """
         for watcher in self._watchers:
-            self._logger.debug(f'Notifying watcher: {watcher}.')
+            self._logger.debug(f'Notifying watcher: {watcher}...')
             try:
                 watcher.push(sender, *args, **kwargs)
             except Exception as e:
                 if raise_exception:
                     raise PushError(repr(e))
                 else:
-                    self._logger.error(f'Watcher: {watcher} failed to process an event. Exception: {repr(e)}.')
+                    self._logger.error(
+                        f'Watcher: {watcher} failed to process an event. Exception: {repr(e)}.',
+                    )
