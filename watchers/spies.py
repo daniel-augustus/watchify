@@ -95,8 +95,7 @@ class WatchersSpy(Watchers):
         >>> watchers
         <WatchersSpy object:Observers[CatWatcher, MonkeyWatcher]>
         """
-        instance = super().__repr__()
-        return instance.replace('Watchers', 'WatchersSpy')
+        return super().__repr__().replace('Watchers', 'WatchersSpy')
 
     def reset(self, reset_spies: bool = True) -> WatchersLite:
         """Prune all saved observers and spies.
@@ -171,7 +170,10 @@ class WatchersSpy(Watchers):
         self._logger.debug(f"<sender '{sender}'> <method '{target}'> is now being spied...")
         return spy
 
-    def spies(self, as_type: t.Optional[t.Iterable] = None) -> t.Iterable[AbstractSpyContainer]:
+    def spies(
+        self,
+        as_type: t.Optional[t.Callable[[t.Iterable], t.Iterable]] = None,
+    ) -> t.Iterable[AbstractSpyContainer]:
         """Bring all spied objects.
 
         Parameters

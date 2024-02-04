@@ -1,14 +1,8 @@
-[tool.poetry]
-name = "watchers"
-version = "0.1.0"
-description = ""
-authors = ["Daniel Augusto <dev.daniel.augusto@gmail.com>"]
-readme = "README.md"
+[tool.coverage.run]
+branch = true
+source = ["watchers"]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.coverage.report]
+precision = 2
+fail_under = 50
+skip_empty = true
