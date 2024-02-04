@@ -49,6 +49,23 @@ class WatchersLite(AbstractWatchers):
         """
         self.notify(*args, **kwargs)
 
+    def __contains__(self, watcher: AbstractWatcher) -> bool:
+        """Check if an observer exists inside observers pool.
+
+        Parameters
+        ----------
+        watcher: `AbstractWatcher` concrete implementation.
+
+        Examples
+        --------
+        >>> cat_watcher, watchers = Watchers(), CatWatcher()
+        >>> watchers.attach(cat_watcher)
+        <Watchers object:Observers[CatWatcher]>
+        >>> cat_watcher in watchers
+        True
+        """
+        return watcher in self._watchers
+
     def __iter__(self) -> AbstractWatcher:
         """Iter through observers pool using instance itself.
 
@@ -79,10 +96,7 @@ class WatchersLite(AbstractWatchers):
         >>> watchers[1]
         MonkeyWatcher object
         """
-        try:
-            return self._watchers[index]
-        except IndexError:
-            raise WatcherError(f'{self} has <{self.count()}> length.')
+        return self._watchers[index]
 
     def __repr__(self) -> str:
         """Show canonical representation, including dynamic truncated observers sequence.
@@ -99,7 +113,7 @@ class WatchersLite(AbstractWatchers):
         watchers = watchers[:-2]
         if self.count() > 8:
             watchers += ', ...'
-        return f'<Watchers object:Observers[{watchers}]>'
+        return f'<WatchersLite object:Observers[{watchers}]>'
 
     def count(self) -> int:
         """Bring the current observers count.
@@ -127,7 +141,10 @@ class WatchersLite(AbstractWatchers):
         self._watchers.clear()
         return self
 
-    def observers(self, as_type: t.Optional[t.Iterable] = None) -> t.Iterable[AbstractWatcher]:
+    def observers(
+        self,
+        as_type: t.Optional[t.Callable[[t.Iterable], t.Iterable]] = None,
+    ) -> t.Iterable[AbstractWatcher]:
         """Bring all observers.
 
         Parameters
@@ -301,6 +318,40 @@ class Watchers(WatchersLite):
         self._logger.disabled = disable_logs
         self._validate = validate
 
+    def __add__(self, watchers: 'Watchers') -> 'Watchers':
+        self._is_watchers(watchers) if self._validate else None
+        return super().__add__(watchers)
+
+    def __getitem__(self, index: int) -> AbstractWatcher:
+        """Fetch an observer by position using instance itself.
+
+        Parameters
+        ----------
+        index: observer reference inside pool.
+
+        Examples
+        --------
+        >>> watchers = Watchers()
+        >>> watchers.attach(CatWatcher())
+        >>> watchers[2]
+        WatcherError: <WatchersSpy object:Observers[CatWatcher]> has <1> length.
+        """
+        try:
+            super().__getitem__(index)
+        except IndexError:
+            raise WatcherError(f'{self} has <{self.count()}> length.')
+
+    def __repr__(self) -> str:
+        """Show canonical representation, including dynamic truncated observers sequence.
+
+        Examples
+        --------
+        >>> watchers = Watchers().attach_many([CatWatcher(), MonkeyWatcher()])
+        >>> watchers
+        <Watchers object:Observers[CatWatcher, MonkeyWatcher]>
+        """
+        return super().__repr__().replace('WatchersLite', 'Watchers')
+
     @staticmethod
     def _is_watcher(obj: t.Any) -> None:
         """Raise an exception if the provided object is not a valid observer.
@@ -338,10 +389,6 @@ class Watchers(WatchersLite):
         """
         if not functions.is_watchers(obj):
             raise NotAnObserverError(f"Expected <class 'AbstractWatchers'>, but got {type(obj)}.")
-
-    def __add__(self, watchers: 'Watchers') -> 'Watchers':
-        self._is_watchers(watchers) if self._validate else None
-        return super().__add__(watchers)
 
     def attach(self, watcher: AbstractWatcher) -> 'Watchers':
         self._is_watcher(watcher) if self._validate else None
@@ -392,6 +439,7 @@ class Watchers(WatchersLite):
         Examples
         --------
         >>> class Food: name = 'fish'
+        ...
         >>> watchers = Watchers().attach(CatWatcher())
         >>> watchers.notify(Food)
         [watchers][DEBUG][2077-12-27 00:00:00,111] >>> Notifying watcher: CatWatcher object.
