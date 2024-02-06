@@ -1,13 +1,13 @@
 import typing as t
-from watchers.abstract import AbstractSpyContainer
-from watchers.watchers import Watchers, WatchersLite
 from watchers.exceptions import SpyError
+from watchers.interfaces import AbstractSpyContainer
+from watchers.watchers import Watchers
 
 
 class SpyContainer(AbstractSpyContainer):
     """Holds metadata from the spy process.
 
-    Auxiliary code for `WatchersSpy` functionalities.
+    Auxiliary `WatchersSpy` implementation functionalities.
 
     Parameters
     ----------
@@ -23,7 +23,7 @@ class SpyContainer(AbstractSpyContainer):
         target: str,
         trigger: str,
         original_state: t.Callable,
-    ):
+    ) -> None:
         """Save spied object information."""
         self._sender = sender
         self._target = target
@@ -34,7 +34,7 @@ class SpyContainer(AbstractSpyContainer):
         """Undo the `WatchersSpy.spy` wrap from the sender."""
         setattr(self._sender, self._target, self._original_state)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Display instance being spied, its wrapped callable and the `nofify`'s orientation."""
         return f"Spying(sender={self._sender}, method={self._target}, trigger={self._trigger})"
 
@@ -47,22 +47,21 @@ class WatchersSpy(Watchers):
     >>> class Food:
     ...    def cook(self, name: str):
     ...        self.name = name
-
+    ...
     >>> class CatWatcher(AbstractWatcher):
     ...    def push(self, food: Food, *args, **kwargs):
     ...        if food.name == 'fish':
     ...            logger.debug(f'Cat loves %s!', food.name)
     ...        else:
     ...            logger.debug(f'Cat hates %s!', food.name)
-
+    ...
     >>> class MonkeyWatcher(AbstractWatcher):
     ...    def push(self, food: Food, *args, **kwargs):
     ...        if food.name == 'banana':
     ...            logger.debug(f'Monkey loves %s!', food.name)
     ...        else:
     ...            logger.debug(f'Monkey hates %s!', food.name)
-
-
+    ...
     >>> food, watchers = Food(), WatchersSpy()
     >>> watchers.attach_many([CatWatcher(), MonkeyWatcher()])
     <WatchersSpy object:Observers[CatWatcher, MonkeyWatcher]>
@@ -80,8 +79,8 @@ class WatchersSpy(Watchers):
     [watchers][DEBUG][2077-12-27 00:00:00,118] >>> Monkey loves banana!
     """
 
-    def __init__(self, *args, **kwargs):
-        """`Watchers` initialization along with an empty structure to track spies."""
+    def __init__(self, *args, **kwargs) -> None:
+        """`Watchers.__init__` along with an empty structure to track spies."""
         super().__init__(*args, **kwargs)
         self._spies: t.Dict[t.Tuple[t.Type, str], AbstractSpyContainer] = {}
         self._container = kwargs.pop('container', SpyContainer)
@@ -97,7 +96,7 @@ class WatchersSpy(Watchers):
         """
         return super().__repr__().replace('Watchers', 'WatchersSpy')
 
-    def reset(self, reset_spies: bool = True) -> WatchersLite:
+    def reset(self, reset_spies: bool = True) -> 'WatchersSpy':
         """Prune all saved observers and spies.
 
         Parameters
@@ -111,7 +110,7 @@ class WatchersSpy(Watchers):
         <WatchersSpy object:Observers[CatWatcher, MonkeyWatcher]>
         >>> watchers.reset()
         >>> watchers
-        <Watchers object:Observers[]>
+        <WatchersSpy object:Observers[]>
         >>> watchers.spies()
         []
         """
@@ -141,7 +140,7 @@ class WatchersSpy(Watchers):
         >>> class Food:
         ...     def cook(self, name: str):
         ...         self.name = name
-
+        ...
         >>> food, watchers = Food(), WatchersSpy()
         >>> watchers.attach_many([CatWatcher(), MonkeyWatcher()])
         <WatchersSpy object:Observers[CatWatcher, MonkeyWatcher]>
@@ -184,7 +183,7 @@ class WatchersSpy(Watchers):
         --------
         >>> class Food:
         ...     def cook(self, name: str): ...
-
+        ...
         >>> watchers = WatchersSpy()
         >>> watchers.spy(food(), 'cook')
         >>> watchers.spies()
@@ -194,19 +193,19 @@ class WatchersSpy(Watchers):
         """
         return list(self._spies.values()) if as_type is None else as_type(self._spies.values())
 
-    def undo_spy(self, sender: t.Type, target: str) -> SpyContainer:
+    def undo_spy(self, sender: t.Any, target: str) -> SpyContainer:
         """Stop spying an object by removing the `notify` wrapper applied by `spy` method.
 
         Parameters
         ----------
-        sender : a class or instance to spy on.
-        target : a method name to spy on.
+        sender : event source.
+        target : sender's callable to be wrapped.
 
         Examples
         --------
         >>> class Food:
         ...     def cook(self, name: str): ...
-
+        ...
         >>> food, watchers = Food(), WatchersSpy()
         >>> watchers.spy(food, 'cook')
         Spying(sender=<Food object>, method=cook, trigger=after)
@@ -225,7 +224,7 @@ class WatchersSpy(Watchers):
         --------
         >>> class Food:
         ...     def cook(self, name: str): ...
-
+        ...
         >>> food_a, food_b, watchers = Food(), Food(),  WatchersSpy()
         >>> watchers.spy(food_a, 'cook', 'after')
         Spying(sender=<Food object>, method=cook, trigger=after)

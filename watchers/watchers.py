@@ -1,11 +1,10 @@
 import logging
 import typing as t
 from copy import deepcopy
-from typing import List
 from watchers import functions
-from watchers.abstract import AbstractWatcher, AbstractWatchers
 from watchers.exceptions import NotAnObserverError, PushError, WatcherError
 from watchers.logger import logger as internal_logger
+from watchers.interfaces import AbstractWatcher, AbstractWatchers
 
 
 class WatchersLite(AbstractWatchers):
@@ -20,28 +19,29 @@ class WatchersLite(AbstractWatchers):
 
         Parameters
         ----------
-        watchers: another `AbstractWatchers` concrete implementation.
+        watchers : another `AbstractWatchers` concrete implementation.
 
         Examples
         --------
         >>> watchers_a = Watchers().attach(CatWatcher())
         >>> watchers_a
-        <Watchers object:Observers[CatWatcher]>
+        <WatchersLite object:Observers[CatWatcher]>
         >>> watchers_b = Watchers().attach(MonkeyWatcher())
-        <Watchers object:Observers[MonkeyWatcher]>
+        <WatchersLite object:Observers[MonkeyWatcher]>
         >>> watchers_a + watchers_b
-        <Watchers object:Observers[CatWatcher, MonkeyWatcher]>
+        <WatchersLite object:Observers[CatWatcher, MonkeyWatcher]>
         """
         output_watchers = deepcopy(self)
         output_watchers.attach_many(watchers.observers())
         return output_watchers
 
     def __call__(self, *args, **kwargs) -> None:
-        """Notify observers using instance itself.
+        """Notify observers.
 
         Examples
         --------
         >>> class Food: name = 'fish'
+        ...
         >>> watchers = Watchers().attach(CatWatcher())
         >>> watchers(Food)
         [watchers][DEBUG][2077-12-27 00:00:00,111] >>> Notifying watcher: CatWatcher object.
@@ -50,17 +50,17 @@ class WatchersLite(AbstractWatchers):
         self.notify(*args, **kwargs)
 
     def __contains__(self, watcher: AbstractWatcher) -> bool:
-        """Check if an observer exists inside observers pool.
+        """Check if an observer exists inside pool.
 
         Parameters
         ----------
-        watcher: `AbstractWatcher` concrete implementation.
+        watcher : `AbstractWatcher` concrete implementation.
 
         Examples
         --------
-        >>> cat_watcher, watchers = Watchers(), CatWatcher()
+        >>> cat_watcher, watchers = CatWatcher(), Watchers()
         >>> watchers.attach(cat_watcher)
-        <Watchers object:Observers[CatWatcher]>
+        <WatchersLite object:Observers[CatWatcher]>
         >>> cat_watcher in watchers
         True
         """
@@ -73,9 +73,10 @@ class WatchersLite(AbstractWatchers):
         --------
         >>> watchers = Watchers()
         >>> watchers.attach_many([CatWatcher(), MonkeyWatcher()])
-        <Watchers object:Observers[CatWatcher, MonkeyWatcher]>
+        <WatchersLite object:Observers[CatWatcher, MonkeyWatcher]>
         >>> for watcher in watchers:
         ...     print(watcher)
+        ...
         CatWatcher object
         MonkeyWatcher object
         """
@@ -83,11 +84,11 @@ class WatchersLite(AbstractWatchers):
             yield watcher
 
     def __getitem__(self, index: int) -> AbstractWatcher:
-        """Fetch an observer by position using instance itself.
+        """Match an observer based on an index.
 
         Parameters
         ----------
-        index: observer reference inside pool.
+        index : observer reference inside pool.
 
         Examples
         --------
@@ -105,7 +106,7 @@ class WatchersLite(AbstractWatchers):
         --------
         >>> watchers = Watchers().attach_many([CatWatcher(), MonkeyWatcher()])
         >>> watchers
-        <Watchers object:Observers[CatWatcher, MonkeyWatcher]>
+        <WatchersLite object:Observers[CatWatcher, MonkeyWatcher]>
         """
         watchers = ''
         for watcher in self._watchers[:8]:
@@ -116,7 +117,7 @@ class WatchersLite(AbstractWatchers):
         return f'<WatchersLite object:Observers[{watchers}]>'
 
     def count(self) -> int:
-        """Bring the current observers count.
+        """Bring the ongoing observers count awaiting an event.
 
         Examples
         --------
@@ -133,10 +134,9 @@ class WatchersLite(AbstractWatchers):
         --------
         >>> watchers = Watchers().attach_many([CatWatcher(), MonkeyWatcher()])
         >>> watchers
-        <Watchers object:Observers[CatWatcher, MonkeyWatcher]>
+        <WatchersLite object:Observers[CatWatcher, MonkeyWatcher]>
         >>> watchers.reset()
-        >>> watchers
-        <Watchers object:Observers[]>
+        <WatchersLite object:Observers[]>
         """
         self._watchers.clear()
         return self
@@ -154,7 +154,7 @@ class WatchersLite(AbstractWatchers):
         Examples
         --------
         >>> watchers = Watchers().attach_many([CatWatcher(), MonkeyWatcher()])
-        >>> watchers.watchers()
+        >>> watchers.observers()
         [CatWatcher object, MonkeyWatcher object]
         >>> watchers.observers(set)
         {CatWatcher object, MonkeyWatcher object}
@@ -166,17 +166,17 @@ class WatchersLite(AbstractWatchers):
 
         Parameters
         ----------
-        watcher: an `AbstractWatcher` concrete implementation.
+        watcher : an `AbstractWatcher` concrete implementation.
 
         Examples
         --------
         >>> watchers = Watchers()
         >>> watchers
-        <Watchers object:Observers[]>
+        <WatchersLite object:Observers[]>
         >>> watchers.attach(CatWatcher())
-        <Watchers object:Observers[CatWatcher]>
+        <WatchersLite object:Observers[CatWatcher]>
         >>> watchers.attach(MonkeyWatcher())
-        <Watchers object:Observers[CatWatcher, MonkeyWatcher]>
+        <WatchersLite object:Observers[CatWatcher, MonkeyWatcher]>
         """
         self._watchers.append(watcher)
         return self
@@ -186,15 +186,15 @@ class WatchersLite(AbstractWatchers):
 
         Parameters
         ----------
-        watchers: a sequence of `AbstractWatcher` concrete implementations.
+        watchers : a sequence of `AbstractWatcher` concrete implementations.
 
         Examples
         --------
         >>> watchers = Watchers()
         >>> watchers
-        <Watchers object:Observers[]>
+        <WatchersLite object:Observers[]>
         >>> watchers.attach_many([CatWatcher(), MonkeyWatcher()])
-        <Watchers object:Observers[CatWatcher, MonkeyWatcher]>
+        <WatchersLite object:Observers[CatWatcher, MonkeyWatcher]>
         """
         self._watchers.extend(watchers)
         return self
@@ -204,16 +204,16 @@ class WatchersLite(AbstractWatchers):
 
         Parameters
         ----------
-        watcher: an `AbstractWatcher` concrete implementation.
+        watcher : an `AbstractWatcher` concrete implementation.
 
         Examples
         --------
         >>> cat_watcher = CatWatcher()
         >>> watchers = Watchers().attach_many([cat_watcher, MonkeyWatcher()])
         >>> watchers
-        <Watchers object:Observers[CatWatcher, MonkeyWatcher]>
+        <WatchersLite object:Observers[CatWatcher, MonkeyWatcher]>
         >>> watchers.detach(cat_watcher)
-        <Watchers object:Observers[MonkeyWatcher]>
+        <WatchersLite object:Observers[MonkeyWatcher]>
         """
         self._watchers.remove(watcher)
         return self
@@ -223,22 +223,22 @@ class WatchersLite(AbstractWatchers):
 
         Parameters
         ----------
-        watchers: a sequence of `AbstractWatcher` concrete implementations.
+        watchers : a sequence of `AbstractWatcher` concrete implementations.
 
         Examples
         --------
         >>> cat_watcher, monkey_watcher = CatWatcher(), MonkeyWatcher()
         >>> watchers = Watchers().attach_many([cat_watcher, monkey_watcher])
         >>> watchers
-        <Watchers object:Observers[CatWatcher, MonkeyWatcher]>
+        <WatchersLite object:Observers[CatWatcher, MonkeyWatcher]>
         >>> watchers.detach_many([cat_watcher, monkey_watcher])
-        <Watchers object:Observers[]>
+        <WatchersLite object:Observers[]>
         """
         [self._watchers.remove(watcher) for watcher in watchers]
         return self
 
     def notify(self, sender: t.Any, *args, **kwargs) -> 'WatchersLite':
-        """Notify all observers about some change that may interest any of them.
+        """Notify all observers about some change that may interest them.
 
         Parameters
         ----------
@@ -250,6 +250,7 @@ class WatchersLite(AbstractWatchers):
         Examples
         --------
         >>> class Food: name = 'fish'
+        ...
         >>> watchers = Watchers().attach(CatWatcher())
         >>> watchers.notify(Food)
         [watchers][DEBUG][2077-12-27 00:00:00,111] >>> Notifying watcher: CatWatcher object.
@@ -273,25 +274,24 @@ class Watchers(WatchersLite):
     >>> class Food:
     ...    def cook(self, name: str):
     ...        self.name = name
-
+    ...
     >>> class CatWatcher(AbstractWatcher):
     ...    def push(self, food: Food, *args, **kwargs):
     ...        if food.name == 'fish':
     ...            logger.debug(f'Cat loves %s!', food.name)
     ...        else:
     ...            logger.debug(f'Cat hates %s!', food.name)
-
+    ...
     >>> class MonkeyWatcher(AbstractWatcher):
     ...    def push(self, food: Food, *args, **kwargs):
     ...        if food.name == 'banana':
     ...            logger.debug(f'Monkey loves %s!', food.name)
     ...        else:
     ...            logger.debug(f'Monkey hates %s!', food.name)
-
-
+    ...
     >>> food, watchers = Food(), Watchers()
     >>> watchers.attach_many([CatWatcher(), MonkeyWatcher()])
-    <Watchers object:Observers[CatWatcher, MonkeyWatcher]>
+    <WatchersLite object:Observers[CatWatcher, MonkeyWatcher]>
     >>> food.cook('fish')
     >>> watchers.notify(food)
     [watchers][DEBUG][2077-12-27 00:00:00,111] >>> Notifying watcher: CatWatcher object...
@@ -312,7 +312,7 @@ class Watchers(WatchersLite):
         disable_logs: bool = False,
         validate: bool = True,
     ) -> None:
-        """`WatchersLite` creation, but allowing log and validation behaviours customization."""
+        """`WatchersLite.__init__`, but allowing log and validation behaviours switch."""
         super().__init__()
         self._logger = logger or internal_logger
         self._logger.disabled = disable_logs
@@ -323,18 +323,20 @@ class Watchers(WatchersLite):
         return super().__add__(watchers)
 
     def __getitem__(self, index: int) -> AbstractWatcher:
-        """Fetch an observer by position using instance itself.
+        """Match an observer based on an index.
 
         Parameters
         ----------
-        index: observer reference inside pool.
+        index : observer reference inside pool.
 
         Examples
         --------
         >>> watchers = Watchers()
         >>> watchers.attach(CatWatcher())
         >>> watchers[2]
-        WatcherError: <WatchersSpy object:Observers[CatWatcher]> has <1> length.
+        Traceback (most recent call last):
+        ...
+        WatcherError: <Watchers object:Observers[CatWatcher]> has <1> length.
         """
         try:
             super().__getitem__(index)
@@ -373,11 +375,11 @@ class Watchers(WatchersLite):
 
     @staticmethod
     def _is_watchers(obj: t.Any):
-        """Raise an exception if the provided object is not a valid observer manager.
+        """Raise an exception if the provided object is not a valid observers manager.
 
         Parameters
         ----------
-        obj: target be perform the `AbstractWatchers` validation.
+        obj : target be perform the `AbstractWatchers` validation.
 
         Examples
         ----------
@@ -396,7 +398,7 @@ class Watchers(WatchersLite):
         self._logger.debug(f'Subscribed watcher: {watcher}.')
         return self
 
-    def attach_many(self, watchers: List[AbstractWatcher]) -> 'Watchers':
+    def attach_many(self, watchers: t.List[AbstractWatcher]) -> 'Watchers':
         [self._is_watcher(watcher) for watcher in watchers] if self._validate else None
         super().attach_many(watchers)
         self._logger.debug(f'Subscribed watchers: {watchers}.')
@@ -410,7 +412,7 @@ class Watchers(WatchersLite):
         self._logger.debug(f'Unsubscribed watcher: {watcher}.')
         return watchers
 
-    def detach_many(self, watchers: List[AbstractWatcher]) -> 'Watchers':
+    def detach_many(self, watchers: t.List[AbstractWatcher]) -> 'Watchers':
         try:
             watchers = super().detach_many(watchers)
         except ValueError:

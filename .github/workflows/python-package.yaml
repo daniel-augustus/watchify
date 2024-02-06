@@ -17,7 +17,7 @@ jobs:
           pip install poetry
           poetry install --with dev
 
-      - name: Linter Flake
+      - name: Linter Flake8
         run:
           poetry run flake8
 
