@@ -3,8 +3,8 @@ name = "watchers"
 version = "0.1.0"
 description = ""
 authors = ["Daniel Augusto <dev.daniel.augusto@gmail.com>"]
-
 readme = "README.md"
+
 [tool.coverage.run]
 branch = true
 source = ["watchers"]
