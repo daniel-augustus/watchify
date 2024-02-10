@@ -1,7 +1,7 @@
 import typing as t
 from functools import wraps
 from watchify.exceptions import SpyError
-from watchify.interfaces import AbstractSpyContainer
+from watchify.interfaces import AbstractSpyContainer, AbstractWatcher
 from watchify.watchers import Watchers
 
 
@@ -96,6 +96,18 @@ class WatchersSpy(Watchers):
         <WatchersSpy object:Observers[CatWatcher, MonkeyWatcher]>
         """
         return super().__repr__().replace('Watchers', 'WatchersSpy')
+
+    def attach(self, watcher: AbstractWatcher) -> 'WatchersSpy':
+        return super().attach(watcher)
+
+    def attach_many(self, watchers: t.List[AbstractWatcher]) -> 'WatchersSpy':
+        return super().attach_many(watchers)
+
+    def detach(self, watcher: AbstractWatcher) -> 'WatchersSpy':
+        return super().detach(watcher)
+
+    def detach_many(self, watchers: t.List[AbstractWatcher]) -> 'WatchersSpy':
+        return super().detach_many(watchers)
 
     def reset(self, reset_spies: bool = True) -> 'WatchersSpy':
         """Prune all saved observers and spies.

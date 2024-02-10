@@ -2,8 +2,8 @@ import logging
 import typing as t
 from copy import deepcopy
 from watchify import functions
-from watchify.exceptions import NotAnObserverError, PushError, WatcherError
-from watchify.logger import logger as internal_logger
+from watchify import exceptions as e
+from watchify.logger import logger as watchify_logger
 from watchify.interfaces import AbstractWatcher, AbstractWatchers
 
 
@@ -66,7 +66,7 @@ class WatchersLite(AbstractWatchers):
         """
         return watcher in self._watchers
 
-    def __iter__(self) -> AbstractWatcher:
+    def __iter__(self) -> t.Generator[AbstractWatcher, None, None]:
         """Iter through observers pool using instance itself.
 
         Examples
@@ -314,7 +314,7 @@ class Watchers(WatchersLite):
     ) -> None:
         """`WatchersLite.__init__`, but allowing log and validation behaviours switch."""
         super().__init__()
-        self._logger = logger or internal_logger
+        self._logger = logger or watchify_logger
         self._logger.disabled = disable_logs
         self._validate = validate
 
@@ -339,9 +339,9 @@ class Watchers(WatchersLite):
         WatcherError: <Watchers object:Observers[CatWatcher]> has <1> length.
         """
         try:
-            super().__getitem__(index)
+            return super().__getitem__(index)
         except IndexError:
-            raise WatcherError(f'{self} has <{self.count()}> length.')
+            raise e.WatcherError(f'{self} has <{self.count()}> length.')
 
     def __repr__(self) -> str:
         """Show canonical representation, including dynamic truncated observers sequence.
@@ -371,7 +371,7 @@ class Watchers(WatchersLite):
         NotAnObserverError: Expected <class 'AbstractWatcher'>, but got <class 'int'>.
         """
         if not functions.is_watcher(obj):
-            raise NotAnObserverError(f"Expected <class 'AbstractWatcher'>, but got {type(obj)}.")
+            raise e.NotAnObserverError(f"Expected <class 'AbstractWatcher'>, but got {type(obj)}.")
 
     @staticmethod
     def _is_watchers(obj: t.Any):
@@ -390,7 +390,9 @@ class Watchers(WatchersLite):
         NotAnObserverError: Expected <class 'AbstractWatchers'>, but got <class 'int'>.
         """
         if not functions.is_watchers(obj):
-            raise NotAnObserverError(f"Expected <class 'AbstractWatchers'>, but got {type(obj)}.")
+            raise e.NotAnOrchestratorError(
+                f"Expected <class 'AbstractWatchers'>, but got {type(obj)}.",
+            )
 
     def attach(self, watcher: AbstractWatcher) -> 'Watchers':
         self._is_watcher(watcher) if self._validate else None
@@ -408,7 +410,7 @@ class Watchers(WatchersLite):
         try:
             watchers = super().detach(watcher)
         except ValueError:
-            raise WatcherError(f'Observer <{watcher}> not found in pool.')
+            raise e.PoolError(f'Observer <{watcher}> not found in pool.')
         self._logger.debug(f'Unsubscribed watcher: {watcher}.')
         return watchers
 
@@ -416,7 +418,7 @@ class Watchers(WatchersLite):
         try:
             watchers = super().detach_many(watchers)
         except ValueError:
-            raise WatcherError('One or more observers not found in pool.')
+            raise e.PoolError('One or more observers not found in pool.')
         self._logger.debug(f'Unsubscribed watchers: {watchers}.')
         return watchers
 
@@ -451,10 +453,10 @@ class Watchers(WatchersLite):
             self._logger.debug(f'Notifying watcher: {watcher}...')
             try:
                 watcher.push(sender, *args, **kwargs)
-            except Exception as e:
+            except Exception as err:
                 if raise_exception:
-                    raise PushError(repr(e))
+                    raise e.PushError(repr(err))
                 else:
                     self._logger.error(
-                        f'Watcher: {watcher} failed to process an event. Exception: {repr(e)}.',
+                        f'Watcher: {watcher} failed to process an event. Exception: {repr(err)}.',
                     )

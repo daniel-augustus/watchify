@@ -6,7 +6,7 @@ from watchify.watchers import Watchers, WatchersLite
 
 
 @pytest.fixture
-def watchers() -> WatchersLite:
+def watchers() -> Watchers:
     """Create a `Watchers` object."""
     return Watchers()
 

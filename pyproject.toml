@@ -11,7 +11,7 @@ source = ["watchify"]
 
 [tool.coverage.report]
 precision = 2
-fail_under = 50
+fail_under = 95.00
 skip_empty = true
 
 [tool.poetry.dependencies]
