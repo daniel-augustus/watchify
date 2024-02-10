@@ -1,7 +1,9 @@
 import typing as t
-from watchers.exceptions import SpyError
-from watchers.interfaces import AbstractSpyContainer
-from watchers.watchers import Watchers
+from functools import wraps
+from typing import Any
+from watchify.exceptions import SpyError
+from watchify.interfaces import AbstractSpyContainer
+from watchify.watchers import Watchers
 
 
 class SpyContainer(AbstractSpyContainer):
@@ -124,38 +126,12 @@ class WatchersSpy(Watchers):
         target: str,
         trigger: str = 'after',
     ) -> SpyContainer:
-        """Imbue `notify` - after or before - the choose callable being executed.
 
-        Parameters
-        ----------
-        sender : a class or instance to spy on.
-        target : a method name to spy on.
-        trigger : a trigger to call the `notify` method. Options are (`before`, `after`).
-            * 'before' will call `notify` before the original method.
-            * 'after' will call `notify` after the original method.
-            * Default: 'after'.
-
-        Examples
-        --------
-        >>> class Food:
-        ...     def cook(self, name: str):
-        ...         self.name = name
-        ...
-        >>> food, watchers = Food(), WatchersSpy()
-        >>> watchers.attach_many([CatWatcher(), MonkeyWatcher()])
-        <WatchersSpy object:Observers[CatWatcher, MonkeyWatcher]>
-        >>> watchers.spy(food, 'cook')
-        Spying(sender=<Food object>, method=cook, trigger=after)
-        >>> food.cook('fish')
-        [watchers][DEBUG][2077-12-27 00:00:00,111] >>> Notifying watcher: CatWatcher object...
-        [watchers][DEBUG][2077-12-27 00:00:00,112] >>> Cat loves fish!
-        [watchers][DEBUG][2077-12-27 00:00:00,113] >>> Notifying watcher: MonkeyWatcher object...
-        [watchers][DEBUG][2077-12-27 00:00:00,114] >>> Monkey hates fish!
-        """
         if trigger not in ('before', 'after'):
             raise SpyError(f"Trigger '{trigger}' is not supported. Options are ('before', 'after')")
         method = getattr(sender, target)
 
+        @wraps(method)
         def spy_wrapper(*args, **kwargs):
             if trigger == 'after':
                 method(*args, **kwargs)
@@ -237,3 +213,9 @@ class WatchersSpy(Watchers):
         ]
         """
         return [self.undo_spy(sender, target) for sender, target in tuple(self._spies.keys())]
+
+
+class WatchersIf(WatchersSpy):
+
+    def notify(self, sender: Any, *args, raise_exception: bool | None = None, **kwargs) -> Watchers:
+        return super().notify(sender, *args, raise_exception=raise_exception, **kwargs)

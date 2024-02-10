@@ -1,10 +1,10 @@
 import logging
 import typing as t
 from copy import deepcopy
-from watchers import functions
-from watchers.exceptions import NotAnObserverError, PushError, WatcherError
-from watchers.logger import logger as internal_logger
-from watchers.interfaces import AbstractWatcher, AbstractWatchers
+from watchify import functions
+from watchify.exceptions import NotAnObserverError, PushError, WatcherError
+from watchify.logger import logger as internal_logger
+from watchify.interfaces import AbstractWatcher, AbstractWatchers
 
 
 class WatchersLite(AbstractWatchers):

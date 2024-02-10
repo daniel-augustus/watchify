@@ -1,7 +1,7 @@
 import pytest
 import typing as t
-from watchers.interfaces import AbstractWatcher
-from watchers.watchers import Watchers, WatchersLite
+from watchify.interfaces import AbstractWatcher
+from watchify.watchers import Watchers, WatchersLite
 
 
 @pytest.fixture

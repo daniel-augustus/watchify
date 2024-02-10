@@ -1,7 +1,7 @@
 from copy import deepcopy
 from pytest_mock import MockerFixture
-from watchers.interfaces import AbstractWatcher
-from watchers.watchers import WatchersLite
+from watchify.interfaces import AbstractWatcher
+from watchify.watchers import WatchersLite
 
 
 class TestWatchersLite:
