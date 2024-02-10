@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.coverage.run]
 branch = true
-source = ["watchers"]
+source = ["watchify"]
 
 [tool.coverage.report]
 precision = 2

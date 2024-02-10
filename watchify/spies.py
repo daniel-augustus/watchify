@@ -1,6 +1,5 @@
 import typing as t
 from functools import wraps
-from typing import Any
 from watchify.exceptions import SpyError
 from watchify.interfaces import AbstractSpyContainer
 from watchify.watchers import Watchers
@@ -213,9 +212,3 @@ class WatchersSpy(Watchers):
         ]
         """
         return [self.undo_spy(sender, target) for sender, target in tuple(self._spies.keys())]
-
-
-class WatchersIf(WatchersSpy):
-
-    def notify(self, sender: Any, *args, raise_exception: bool | None = None, **kwargs) -> Watchers:
-        return super().notify(sender, *args, raise_exception=raise_exception, **kwargs)

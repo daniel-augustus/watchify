@@ -1,6 +1,7 @@
 import pytest
 import typing as t
 from watchify.interfaces import AbstractWatcher
+from watchify.spies import WatchersSpy
 from watchify.watchers import Watchers, WatchersLite
 
 
@@ -14,6 +15,12 @@ def watchers() -> WatchersLite:
 def watchers_lite() -> WatchersLite:
     """Create a `WatchersLite` object."""
     return WatchersLite()
+
+
+@pytest.fixture
+def watchers_spy() -> WatchersSpy:
+    """Create a `WatchersSpy` object."""
+    return WatchersSpy()
 
 
 @pytest.fixture
