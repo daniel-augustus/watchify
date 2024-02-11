@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 class AbstractWatcher:
     """Interface for minimum observers implementation."""
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'{self.__class__.__name__} object'
 
     @abstractmethod

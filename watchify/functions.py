@@ -1,5 +1,5 @@
 import typing as t
-from watchers.abstract import AbstractWatcher, AbstractWatchers
+from watchify.interfaces import AbstractWatcher, AbstractWatchers
 
 
 def is_watcher(obj: t.Any) -> bool:
