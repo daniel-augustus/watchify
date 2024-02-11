@@ -52,24 +52,24 @@ class WatchersSpy(Watchers):
 
     Examples
     --------
-     class Food:
-        def cook(self, name: str):
-            self.name = name
-
-     class CatWatcher(AbstractWatcher):
-        def push(self, food: Food, *args, **kwargs):
-            if food.name == 'fish':
-                logger.debug(f'Cat loves %s!', food.name)
-            else:
-                logger.debug(f'Cat hates %s!', food.name)
-
-     class MonkeyWatcher(AbstractWatcher):
-        def push(self, food: Food, *args, **kwargs):
-            if food.name == 'banana':
-                logger.debug(f'Monkey loves %s!', food.name)
-            else:
-                logger.debug(f'Monkey hates %s!', food.name)
-
+    >>> class Food:
+    ...    def cook(self, name: str):
+    ...        self.name = name
+    ...
+    >>> class CatWatcher(AbstractWatcher):
+    ...    def push(self, food: Food, *args, **kwargs):
+    ...        if food.name == 'fish':
+    ...            logger.debug(f'Cat loves %s!', food.name)
+    ...        else:
+    ...            logger.debug(f'Cat hates %s!', food.name)
+    ...
+    >>> class MonkeyWatcher(AbstractWatcher):
+    ...    def push(self, food: Food, *args, **kwargs):
+    ...        if food.name == 'banana':
+    ...            logger.debug(f'Monkey loves %s!', food.name)
+    ...        else:
+    ...            logger.debug(f'Monkey hates %s!', food.name)
+    ...
     >>> food, watchers = Food(), WatchersSpy()
     >>> watchers.attach_many([CatWatcher(), MonkeyWatcher()])
     <WatchersSpy object:Observers[CatWatcher, MonkeyWatcher]>
@@ -124,8 +124,6 @@ class WatchersSpy(Watchers):
     ) -> None:
         """Imbue a callable with `notify` call if a condition is met."""
         output = method(*args, **kwargs)
-        print('Exit:', output)
-        print('Expected:', on_return)
         if output in on_return:
             self.notify(sender, *args, **kwargs)
 
