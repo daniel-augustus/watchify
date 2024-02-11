@@ -1,18 +1,13 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.poetry]
-name = "watchers"
+name = "watchify"
 version = "0.1.0"
-description = ""
+description = "Decoupled event-driven communication between objects."
 authors = ["Daniel Augusto <dev.daniel.augusto@gmail.com>"]
 readme = "README.md"
-
-[tool.coverage.run]
-branch = true
-source = ["watchify"]
-
-[tool.coverage.report]
-precision = 2
-fail_under = 100
-skip_empty = true
 
 [tool.poetry.dependencies]
 python = "^3.8.1"
@@ -23,6 +18,11 @@ pytest = "^8.0.0"
 flake8 = "^7.0.0"
 pytest-mock = "^3.12.0"
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.coverage.run]
+branch = true
+source = ["watchify"]
+
+[tool.coverage.report]
+precision = 2
+fail_under = 100
+skip_empty = true
