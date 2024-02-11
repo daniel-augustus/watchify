@@ -29,6 +29,12 @@ class TestWatchersLite:
         assert watchers_lite_copy.count() == 1
         assert watchers.count() == 2
 
+    def test_call(self, watchers_lite: WatchersLite, mocker: MockerFixture):
+        """Validations on `__call__` method."""
+        mock_notify = mocker.patch.object(watchers_lite, 'notify')
+        watchers_lite()
+        mock_notify.assert_called_once()
+
     def test_contains(
         self,
         cat_watcher: AbstractWatcher,
@@ -145,6 +151,15 @@ class TestWatchersLite:
 class TestWatchers:
     """Tests for `watchify.watcher.Watchers` implementation."""
 
+    @pytest.fixture
+    def dummy_watcher(self) -> AbstractWatcher:
+        """Dummy `AbstractWatcher` for testing purposes."""
+        class DummyWatcher(AbstractWatcher):
+            def push(self, *args, **kwargs):
+                raise Exception
+
+        return DummyWatcher()
+
     def test_add(self, watchers: Watchers):
         """Validations on `__add__` method."""
         output_watchers = watchers + Watchers()
@@ -245,10 +260,11 @@ class TestWatchers:
         mocker: MockerFixture,
         watchers: Watchers,
         cat_watcher: AbstractWatcher,
+        dummy_watcher: AbstractWatcher,
         food_sender: object,
     ):
         """Validations on `notify` method."""
-        watchers.attach(cat_watcher)
+        watchers.attach_many([cat_watcher, dummy_watcher])
         mock_push = mocker.patch.object(cat_watcher, 'push')
         food_sender.cook('fish')
         watchers.notify(food_sender)
@@ -258,14 +274,11 @@ class TestWatchers:
         self,
         watchers: Watchers,
         cat_watcher: AbstractWatcher,
+        dummy_watcher: AbstractWatcher,
         food_sender: object,
     ):
         """Validations on `notify` method if `raises_exception=True` is provided."""
-        class DummyWatcher(AbstractWatcher):
-            def push(self, *args, **kwargs):
-                raise Exception
-
-        watchers.attach_many([cat_watcher, DummyWatcher()])
+        watchers.attach_many([cat_watcher, dummy_watcher])
         food_sender.cook('fish')
         with pytest.raises(Exception):
             watchers.notify(food_sender, raise_exception=True)

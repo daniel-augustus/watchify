@@ -2,20 +2,42 @@ import pytest
 from pytest_mock import MockerFixture
 from watchify.exceptions import SpyError
 from watchify.interfaces import AbstractWatcher
-from watchify.spies import AbstractSpyContainer, WatchersSpy
+from watchify.spies import AbstractSpyContainer, SpyContainer, WatchersSpy
+
+
+@pytest.fixture
+def dummy() -> object:
+    """Dummy object for testing purposes."""
+    class Dummy:
+
+        def __repr__(self) -> str:
+            return 'Dummy object'
+
+        def main(self) -> None:
+            return None
+
+    return Dummy()
+
+
+class TestSpyContainer:
+    """Tests for `watchify.spies.SpyContainer` implementation."""
+
+    def test_repr(self, dummy: object):
+        """Validations on `__repr__` method."""
+        container = SpyContainer(dummy, 'main', constraint='after', original_state=None)
+        assert repr(container) == "Spying(sender='Dummy object', method='main', constraint='after')"
+
+    def test_repr_truncated(self, dummy: object):
+        """Validations on `__repr__` method for too long constraints."""
+        constraint = str([1] * 81)
+        container = SpyContainer(dummy, 'main', constraint=constraint, original_state=None)
+        assert repr(container) == (
+            f"Spying(sender='Dummy object', method='main', constraint='{constraint[:80]}...')"
+        )
 
 
 class TestWatchersSpy:
     """Tests for `watchify.spies.WatchersSpy` implementation."""
-
-    @pytest.fixture
-    def dummy(self) -> object:
-        """Dummy object for testing purposes."""
-        class Dummy:
-            def main(self) -> None:
-                pass
-
-        return Dummy()
 
     def test_repr(self, cat_watcher: AbstractWatcher, watchers_spy: WatchersSpy):
         """Validations on `__repr__` method."""
@@ -54,10 +76,85 @@ class TestWatchersSpy:
         dummy.main()
         spy_notify.assert_called_once()
 
+    def test_spy_after(self, watchers_spy: WatchersSpy, dummy: object, mocker: MockerFixture):
+        """Validations on `spy_after` flow."""
+        mock_main = mocker.patch.object(dummy, 'main')
+        mock_notify = mocker.patch.object(watchers_spy, 'notify')
+        watchers_spy._spy(dummy, 'main', getattr(dummy, 'main'), trigger='after')
+        dummy.main()
+        mock_main.assert_called_once()
+        mock_notify.assert_called_once()
+
+    def test_spy_before(self, watchers_spy: WatchersSpy, dummy: object, mocker: MockerFixture):
+        """Validations on `spy_before` flow."""
+        mock_main = mocker.patch.object(dummy, 'main')
+        mock_notify = mocker.patch.object(watchers_spy, 'notify')
+        watchers_spy._spy(dummy, 'main', getattr(dummy, 'main'), trigger='before')
+        dummy.main()
+        mock_main.assert_called_once()
+        mock_notify.assert_called_once()
+
+    def test_spy_on_return(self, watchers_spy: WatchersSpy, dummy: object, mocker: MockerFixture):
+        """Validations on `spy_on_return` flow."""
+        mock_main = mocker.patch.object(dummy, 'main')
+        mock_main.return_value = None
+        mock_notify = mocker.patch.object(watchers_spy, 'notify')
+        watchers_spy._spy(dummy, 'main', getattr(dummy, 'main'), on_return=(None,))
+        dummy.main()
+        mock_main.assert_called_once()
+        mock_notify.assert_called_once()
+
+    def test_spy_on_return_skip(
+        self,
+        dummy: object,
+        mocker: MockerFixture,
+        watchers_spy: WatchersSpy,
+    ):
+        """Validations on `spy_on_return` flow skipping `notify` call.."""
+        mock_main = mocker.patch.object(dummy, 'main')
+        mock_main.return_value = ''
+        mock_notify = mocker.patch.object(watchers_spy, 'notify')
+        watchers_spy._spy(dummy, 'main', getattr(dummy, 'main'), on_return=(None,))
+        dummy.main()
+        mock_main.assert_called_once()
+        mock_notify.assert_not_called()
+
     def test_spy_invalid_spy(self, watchers_spy: WatchersSpy, dummy: object):
         """Validations on `spy` method when an invalid `trigger` arg is provided."""
         with pytest.raises(SpyError):
             watchers_spy.spy(dummy, 'main', 'unkown')
+
+    def test_attach(self, watchers_spy: WatchersSpy, cat_watcher: AbstractWatcher):
+        """Validations on `attach` method."""
+        assert not watchers_spy.observers()
+        watchers_spy.attach(cat_watcher)
+        assert watchers_spy.observers()
+        assert isinstance(watchers_spy, WatchersSpy)
+
+    def test_attach_many(self, watchers_spy: WatchersSpy, cat_watcher: AbstractWatcher):
+        """Validations on `attach_many` method."""
+        assert not watchers_spy.observers()
+        watchers_spy.attach_many([cat_watcher])
+        assert watchers_spy.observers()
+        assert isinstance(watchers_spy, WatchersSpy)
+
+    def test_detach(self, watchers_spy: WatchersSpy, cat_watcher: AbstractWatcher):
+        """Validations on `detach` method."""
+        assert not watchers_spy.observers()
+        watchers_spy.attach(cat_watcher)
+        assert watchers_spy.observers()
+        watchers_spy.detach(cat_watcher)
+        assert not watchers_spy.observers()
+        assert isinstance(watchers_spy, WatchersSpy)
+
+    def test_detach_many(self, watchers_spy: WatchersSpy, cat_watcher: AbstractWatcher):
+        """Validations on `detach_many` method."""
+        assert not watchers_spy.observers()
+        watchers_spy.attach(cat_watcher)
+        assert watchers_spy.observers()
+        watchers_spy.detach_many([cat_watcher])
+        assert not watchers_spy.observers()
+        assert isinstance(watchers_spy, WatchersSpy)
 
     def test_spies(self, watchers_spy: WatchersSpy, dummy: object):
         """Validations on `spies` method."""
