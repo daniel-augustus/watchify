@@ -1,0 +1,8 @@
+.venv
+.coverage
+.pytest_cache/
+venv/
+dist/
+htmlcov
+poetry.lock
+__pycache__/
