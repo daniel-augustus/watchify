@@ -1,21 +1,34 @@
-# Watchify
+<h1 align="center">Watchify</h1>
 
-                    ⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⢠⡆⠀⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀
-                    ⠀⠀⠀⠀⠀⠀⠈⣷⣄⠀⠀⠀⠀⣾⣷⠀⠀⠀⠀⣠⣾⠃⠀⠀⠀⠀⠀⠀⠀⠀
-                    ⠀⠀⠀⠀⠀⠀⠀⢿⠿⠃⠀⠀⠀⠉⠉⠁⠀⠀⠐⠿⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀
-                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣠⣤⣤⣶⣶⣶⣤⣤⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-                    ⠀⠀⠀⠀⠀⢀⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣦⣄⠀⠀⠀⠀⠀⠀
-                    ⠀⠀⠀⣠⣶⣿⣿⡿⣿⣿⣿⡿⠋⠉⠀⠀⠉⠙⢿⣿⣿⡿⣿⣿⣷⣦⡀⠀⠀⠀
-                    ⠀⢀⣼⣿⣿⠟⠁⢠⣿⣿⠏⠀⠀⢠⣤⣤⡀⠀⠀⢻⣿⣿⡀⠙⢿⣿⣿⣦⠀⠀
-                    ⣰⣿⣿⡟⠁⠀⠀⢸⣿⣿⠀⠀⠀⢿⣿⣿⡟⠀⠀⠈⣿⣿⡇⠀⠀⠙⣿⣿⣷⡄
-                    ⠈⠻⣿⣿⣦⣄⠀⠸⣿⣿⣆⠀⠀⠀⠉⠉⠀⠀⠀⣸⣿⣿⠃⢀⣤⣾⣿⣿⠟⠁
-                    ⠀⠀⠈⠻⣿⣿⣿⣶⣿⣿⣿⣦⣄⠀⠀⠀⢀⣠⣾⣿⣿⣿⣾⣿⣿⡿⠋⠁⠀⠀
-                    ⠀⠀⠀⠀⠀⠙⠻⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⠁⠀⠀⠀⠀⠀
-                    ⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠛⠛⠿⠿⠿⠿⠿⠿⠛⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀
-                    ⠀⠀⠀⠀⠀⠀⠀⢰⣷⡦⠀⠀⠀⢀⣀⣀⠀⠀⠀⢴⣾⡇⠀⠀⠀⠀⠀⠀⠀⠀
-                    ⠀⠀⠀⠀⠀⠀⠀⣸⠟⠁⠀⠀⠀⠘⣿⡇⠀⠀⠀⠀⠙⢷⠀⠀⠀⠀⠀⠀⠀⠀
-                    ⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠻⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀
 
+                                    ⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⢠⡆⠀⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀
+                                    ⠀⠀⠀⠀⠀⠀⠈⣷⣄⠀⠀⠀⠀⣾⣷⠀⠀⠀⠀⣠⣾⠃⠀⠀⠀⠀⠀⠀⠀⠀
+                                    ⠀⠀⠀⠀⠀⠀⠀⢿⠿⠃⠀⠀⠀⠉⠉⠁⠀⠀⠐⠿⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣠⣤⣤⣶⣶⣶⣤⣤⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                                    ⠀⠀⠀⠀⠀⢀⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣦⣄⠀⠀⠀⠀⠀⠀
+                                    ⠀⠀⠀⣠⣶⣿⣿⡿⣿⣿⣿⡿⠋⠉⠀⠀⠉⠙⢿⣿⣿⡿⣿⣿⣷⣦⡀⠀⠀⠀
+                                    ⠀⢀⣼⣿⣿⠟⠁⢠⣿⣿⠏⠀⠀⢠⣤⣤⡀⠀⠀⢻⣿⣿⡀⠙⢿⣿⣿⣦⠀⠀
+                                    ⣰⣿⣿⡟⠁⠀⠀⢸⣿⣿⠀⠀⠀⢿⣿⣿⡟⠀⠀⠈⣿⣿⡇⠀⠀⠙⣿⣿⣷⡄
+                                    ⠈⠻⣿⣿⣦⣄⠀⠸⣿⣿⣆⠀⠀⠀⠉⠉⠀⠀⠀⣸⣿⣿⠃⢀⣤⣾⣿⣿⠟⠁
+                                    ⠀⠀⠈⠻⣿⣿⣿⣶⣿⣿⣿⣦⣄⠀⠀⠀⢀⣠⣾⣿⣿⣿⣾⣿⣿⡿⠋⠁⠀⠀
+                                    ⠀⠀⠀⠀⠀⠙⠻⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⠁⠀⠀⠀⠀⠀
+                                    ⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠛⠛⠿⠿⠿⠿⠿⠿⠛⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                                    ⠀⠀⠀⠀⠀⠀⠀⢰⣷⡦⠀⠀⠀⢀⣀⣀⠀⠀⠀⢴⣾⡇⠀⠀⠀⠀⠀⠀⠀⠀
+                                    ⠀⠀⠀⠀⠀⠀⠀⣸⠟⠁⠀⠀⠀⠘⣿⡇⠀⠀⠀⠀⠙⢷⠀⠀⠀⠀⠀⠀⠀⠀
+                                    ⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠻⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀
+
+***
+
+<p align="center">
+  <a href='https://coveralls.io/github/daniel-augustus/watchify?branch=main'><img src='https://coveralls.io/repos/github/daniel-augustus/watchify/badge.svg?branch=main' alt='Coverage Status' /></a>
+  <img alt="License" src="https://img.shields.io/badge/License-MIT-blue.svg">
+  <img alt="Python Version" src="https://img.shields.io/badge/Python-^3.8.1-blue.svg">
+  <a href="https://pypi.org/project/watchify/">
+    <img alt="PyPi" src="https://img.shields.io/badge/PyPi-0.2.0-yellow.svg">
+  </a>
+</p>
+
+***
 
 ## About
 
@@ -38,24 +51,24 @@ from watchify.logger import logger
 
 
 class Food:
-    def cook(self, name: str):
+    def cook(self, name: str) -> None:
         self.name = name
 
 
 class CatWatcher(AbstractWatcher):
-    def push(self, food: Food, *args, **kwargs):
-        if food.name == "fish":
-            logger.debug(f"Cat loves %s!", food.name)
+    def push(self, food: Food, *args, **kwargs) -> None:
+        if food.name == 'fish':
+            logger.debug(f'Cat loves %s!', food.name)
         else:
-            logger.debug(f"Cat hates %s!", food.name)
+            logger.debug(f'Cat hates %s!', food.name)
 
 
 class MonkeyWatcher(AbstractWatcher):
-    def push(self, food: Food, *args, **kwargs):
-        if food.name == "banana":
-            logger.debug(f"Monkey loves %s!", food.name)
+    def push(self, food: Food, *args, **kwargs) -> None:
+        if food.name == 'banana':
+            logger.debug(f'Monkey loves %s!', food.name)
         else:
-            logger.debug(f"Monkey hates %s!", food.name)
+            logger.debug(f'Monkey hates %s!', food.name)
 
 
 >>> food, watchers = Food(), Watchers()
@@ -75,34 +88,14 @@ class MonkeyWatcher(AbstractWatcher):
 [watchers][DEBUG][2077-12-27 00:00:00,118] >>> Monkey loves banana!
 ```
 
-Or using `WatchersSpy` to notify listeners whenever a specified constraint is met, without needing
-to manually invoke `notify` like above:
+Or using `WatchersSpy`, you can notify listeners automatically whenever a specified constraint is
+met, so you don't need to manually invoke `notify` as shown above:
 
 ```python
 from watchify import AbstractWatcher, WatchersSpy
 from watchify.logger import logger
 
-
-class Food:
-    def cook(self, name: str):
-        self.name = name
-
-
-class CatWatcher(AbstractWatcher):
-    def push(self, food: Food, *args, **kwargs):
-        if food.name == 'fish':
-            logger.debug(f'Cat loves %s!', food.name)
-        else:
-            logger.debug(f'Cat hates %s!', food.name)
-
-
-class MonkeyWatcher(AbstractWatcher):
-    def push(self, food: Food, *args, **kwargs):
-        if food.name == 'banana':
-            logger.debug(f'Monkey loves %s!', food.name)
-        else:
-            logger.debug(f'Monkey hates %s!', food.name)
-
+# [...]
 
 >>> food, watchers = Food(), WatchersSpy()
 >>> watchers.attach_many([CatWatcher(), MonkeyWatcher()])

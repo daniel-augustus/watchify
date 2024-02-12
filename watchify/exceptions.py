@@ -15,7 +15,7 @@ class PushError(WatcherError):
 
 
 class SpyError(WatcherError):
-    """Spy attempt has failed."""
+    """Spy related operations base error."""
 
 
 class PoolError(WatcherError):

@@ -53,18 +53,18 @@ class WatchersSpy(Watchers):
     Examples
     --------
     >>> class Food:
-    ...    def cook(self, name: str):
+    ...    def cook(self, name: str) -> None:
     ...        self.name = name
     ...
     >>> class CatWatcher(AbstractWatcher):
-    ...    def push(self, food: Food, *args, **kwargs):
+    ...    def push(self, food: Food, *args, **kwargs) -> None:
     ...        if food.name == 'fish':
     ...            logger.debug(f'Cat loves %s!', food.name)
     ...        else:
     ...            logger.debug(f'Cat hates %s!', food.name)
     ...
     >>> class MonkeyWatcher(AbstractWatcher):
-    ...    def push(self, food: Food, *args, **kwargs):
+    ...    def push(self, food: Food, *args, **kwargs) -> None:
     ...        if food.name == 'banana':
     ...            logger.debug(f'Monkey loves %s!', food.name)
     ...        else:
@@ -268,7 +268,13 @@ class WatchersSpy(Watchers):
         >>> watchers.undo_spy(food, 'cook')
         Spying(sender'=<Food object>', method='cook', constraint='after')
         """
-        spy = self._spies.pop((sender, target))
+        try:
+            spy = self._spies.pop((sender, target))
+        except KeyError:
+            raise SpyError(
+                f"<sender '{sender.__class__.__name__}'> holding <method '{target}'> is not being "
+                "spied."
+            )
         spy.restore_state()
         self._logger.debug(f"<sender '{sender}'> <method '{target}'> is no longer being spied.")
         return spy

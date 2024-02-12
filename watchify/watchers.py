@@ -1,8 +1,7 @@
 import logging
 import typing as t
 from copy import deepcopy
-from watchify import functions
-from watchify import exceptions as e
+from watchify import exceptions as e, functions
 from watchify.logger import logger as watchify_logger
 from watchify.interfaces import AbstractWatcher, AbstractWatchers
 
@@ -272,18 +271,18 @@ class Watchers(WatchersLite):
     Examples
     --------
     >>> class Food:
-    ...    def cook(self, name: str):
+    ...    def cook(self, name: str) -> None:
     ...        self.name = name
     ...
     >>> class CatWatcher(AbstractWatcher):
-    ...    def push(self, food: Food, *args, **kwargs):
+    ...    def push(self, food: Food, *args, **kwargs) -> None:
     ...        if food.name == 'fish':
     ...            logger.debug(f'Cat loves %s!', food.name)
     ...        else:
     ...            logger.debug(f'Cat hates %s!', food.name)
     ...
     >>> class MonkeyWatcher(AbstractWatcher):
-    ...    def push(self, food: Food, *args, **kwargs):
+    ...    def push(self, food: Food, *args, **kwargs) -> None:
     ...        if food.name == 'banana':
     ...            logger.debug(f'Monkey loves %s!', food.name)
     ...        else:
@@ -374,7 +373,7 @@ class Watchers(WatchersLite):
             raise e.NotAnObserverError(f"Expected <class 'AbstractWatcher'>, but got {type(obj)}.")
 
     @staticmethod
-    def _is_watchers(obj: t.Any):
+    def _is_watchers(obj: t.Any) -> None:
         """Raise an exception if the provided object is not a valid observers manager.
 
         Parameters
@@ -408,19 +407,19 @@ class Watchers(WatchersLite):
 
     def detach(self, watcher: AbstractWatcher) -> 'Watchers':
         try:
-            watchers = super().detach(watcher)
+            super().detach(watcher)
         except ValueError:
             raise e.PoolError(f'Observer <{watcher}> not found in pool.')
         self._logger.debug(f'Unsubscribed watcher: {watcher}.')
-        return watchers
+        return self
 
     def detach_many(self, watchers: t.List[AbstractWatcher]) -> 'Watchers':
         try:
-            watchers = super().detach_many(watchers)
+            super().detach_many(watchers)
         except ValueError:
             raise e.PoolError('One or more observers not found in pool.')
         self._logger.debug(f'Unsubscribed watchers: {watchers}.')
-        return watchers
+        return self
 
     def notify(
         self,
@@ -428,7 +427,7 @@ class Watchers(WatchersLite):
         *args,
         raise_exception: t.Optional[bool] = None,
         **kwargs,
-    ) -> 'Watchers':
+    ) -> None:
         """Notify all observers about some change that may interest any of them.
 
         Parameters

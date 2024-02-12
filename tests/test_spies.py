@@ -176,6 +176,11 @@ class TestWatchersSpy:
         dummy.main()
         spy_notify.assert_not_called()
 
+    def test_undo_spy_exception(self, watchers_spy: WatchersSpy, dummy: object,):
+        """Validations on `undo_spy` method when an invalid `sender` arg is provided."""
+        with pytest.raises(SpyError):
+            watchers_spy.undo_spy(dummy, 'main')
+
     def test_undo_spies(self, watchers_spy: WatchersSpy, dummy: object):
         """Validations on `undo_spies` method."""
         class AnotherDummy:
@@ -185,5 +190,6 @@ class TestWatchersSpy:
         watchers_spy.spy(dummy, 'main')
         watchers_spy.spy(AnotherDummy(), 'main')
         assert len(watchers_spy.spies()) == 2
-        watchers_spy.undo_spies()
+        spies = watchers_spy.undo_spies()
+        assert all(isinstance(spy, AbstractSpyContainer) for spy in spies)
         assert len(watchers_spy.spies()) == 0

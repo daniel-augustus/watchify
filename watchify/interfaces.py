@@ -2,8 +2,8 @@ import typing as t
 from abc import ABC, abstractmethod
 
 
-class AbstractWatcher:
-    """Interface for minimum observers implementation."""
+class AbstractWatcher(ABC):
+    """Interface to create observers managed by `watchify` base implementations."""
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__} object'
@@ -14,7 +14,7 @@ class AbstractWatcher:
 
 
 class AbstractWatchers(ABC):
-    """Interface for minimum observers manager implementation."""
+    """Interface to create observers managers."""
 
     @abstractmethod
     def attach(self, watcher: AbstractWatcher) -> 'AbstractWatchers':
@@ -37,7 +37,7 @@ class AbstractWatchers(ABC):
         """Bring observers pool."""
 
     @abstractmethod
-    def notify(self, sender: t.Any, *args, **kwargs) -> 'AbstractWatchers':
+    def notify(self, sender: t.Any, *args, **kwargs) -> None:
         """Notify all observers."""
 
 
