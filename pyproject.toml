@@ -47,7 +47,6 @@ coveralls = "3.3.1"
 pytest = "8.0.0"
 
 [tool.coverage.run]
-branch = true
 source = ["watchify"]
 
 [tool.coverage.report]
