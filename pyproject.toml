@@ -4,19 +4,47 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "watchify"
-version = "0.1.0"
-description = "Decoupled event-driven communication between objects."
-authors = ["Daniel Augusto <dev.daniel.augusto@gmail.com>"]
+version = "0.2.0"
 readme = "README.md"
+license = "MIT"
+authors = ["Daniel Augusto <dev.daniel.augusto@gmail.com>"]
+keywords = [
+    "watchify",
+    "observer",
+    "decoupled",
+    "listeners",
+    "event-driven",
+    "objects communication",
+]
+classifiers = [
+    "Topic :: Utilities",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+homepage = "https://github.com/daniel-augustus/watchify"
+repository = "https://github.com/daniel-augustus/watchify"
+description = "Decoupled event-driven communication between objects."
 
 [tool.poetry.dependencies]
 python = "^3.8.1"
 
 [tool.poetry.group.dev.dependencies]
-coverage = "^7.4.1"
-pytest = "^8.0.0"
-flake8 = "^7.0.0"
-pytest-mock = "^3.12.0"
+flake8 = "7.0.0"
+pytest-mock = "3.12.0"
+coveralls = "3.3.1"
+pytest = "8.0.0"
 
 [tool.coverage.run]
 branch = true
